@@ -49,6 +49,15 @@ namespace dl
         }
 
         /**
+         * @brief Convert RGB565 image to RGB888 image.
+         * 
+         * @param image  ptr of RGB565 image
+         * @param image_shape shape of the input image
+         * @return Tensor<uint8_t>* output RGB88 image
+         */
+        Tensor<uint8_t> *convert_image_rgb565_to_rgb888(uint16_t *image, std::vector<int> &image_shape);
+
+        /**
          * @brief Convert RGB565 pixel to Gray.
          * 
          * @param input pixel value in RGB565
@@ -370,11 +379,113 @@ namespace dl
          */
         uint32_t get_moving_point_number(uint8_t *f1, uint8_t *f2, const uint32_t height, const uint32_t width, const uint32_t stride, const uint32_t threshold = 5);
 
-
+        /**
+         * @brief Apply an affine transformation to an image.
+         * 
+         * @tparam T 
+         * @param input     the input image.
+         * @param output    the output image.
+         * @param M_inv     the inverse transformation matrix.
+         */
         template <typename T>
         void warp_affine(dl::Tensor<T> *input, dl::Tensor<T> *output, dl::math::Matrix<float> *M_inv);
+
+        /**
+         * @brief Apply an affine transformation to an image.
+         * 
+         * @tparam T 
+         * @param input    the pointer of the input image.
+         * @param shape    the shape of the input image.
+         * @param output   the output image.
+         * @param M_inv    the inverse transformation matrix.
+         */
         template <typename T>
         void warp_affine(uint16_t *input, std::vector<int> shape, dl::Tensor<T> *output, dl::math::Matrix<float> *M_inv);
+
+        /**
+         * @brief Get the otsu thresh object.
+         * 
+         * @param image  the gray image.
+         * @return uint8_t the otsu thresh.
+         */
+        uint8_t get_otsu_thresh(Tensor<uint8_t> &image);
+
+        /**
+         * @brief Convert RGB image to gray image
+         * 
+         * @param image  input image
+         * @param bgr    true: the image is in BGR format
+         *               false: the image is in RGB format
+         * @return Tensor<uint8_t>* output image in gray format
+         */
+        Tensor<uint8_t> *rgb2gray(Tensor<uint8_t> &image, bool bgr = false);
+
+        /**
+         * @brief Convert RGB image to LAB image
+         * 
+         * @param image  input image
+         * @param bgr    true: the image is in BGR format
+         *               false: the image is in RGB format 
+         * @param fast   true: use the fast alogrithm， but the accuracy will be reduced
+         *               false: do not use the fast alogrithm
+         * @return Tensor<uint8_t>* output image in LAB foramt
+         */
+        Tensor<uint8_t> *rgb2lab(Tensor<uint8_t> &image, bool bgr = false, bool fast = true);
+
+        /**
+         * @brief Convert RGB image to HSV image
+         * 
+         * @param image   input image
+         * @param bgr     true: the image is in BGR format
+         *                false: the image is in RGB format 
+         * @param fast    true: use the fast alogrithm， but the accuracy will be reduced
+         *                false: do not use the fast alogrithm
+         * @return Tensor<uint8_t>* output image in HSV format
+         */
+        Tensor<uint8_t> *rgb2hsv(Tensor<uint8_t> &image, bool bgr = false, bool fast = true);
+
+        /**
+         * @brief resize an image to the target shape.
+         * 
+         * @param image the input image Tensor
+         * @param target_shape the target shape of the resized image.
+         * @param resize_type one of IMAGE_RESIZE_BILINEAR or IMAGE_RESIZE_MEAN or IMAGE_RESIZE_NEAREST
+         * @return Tensor<uint8_t>* the pointer of the resized image Tensor
+         */
+        Tensor<uint8_t> *resize_image(Tensor<uint8_t> &image, std::vector<int> target_shape, resize_type_t resize_type);
+
+        /**
+         * @brief resize an image to the target shape.
+         * 
+         * @param image the input image Tensor
+         * @param resized_image the resized image Tensor
+         * @param resize_type one of IMAGE_RESIZE_BILINEAR or IMAGE_RESIZE_MEAN or IMAGE_RESIZE_NEAREST
+         */
+        void resize_image(Tensor<uint8_t> &image, Tensor<uint8_t> &resized_image, resize_type_t resize_type);
+
+       /**
+        * @brief resize an image to the target shape with nearest method.
+        * 
+        * @tparam T 
+        * @param image the pointer of the input image
+        * @param input_shape the input shape of the image
+        * @param target_shape the target shape of the resized image
+        * @return T* the pointer of the resized image
+        */
+        template <typename T>
+        T *resize_image_nearest(T *image, std::vector<int> input_shape, std::vector<int> target_shape);
+
+        /**
+         * @brief resize an image to the target shape with nearest method.
+         * 
+         * @tparam T 
+         * @param image the pointer of the input image
+         * @param input_shape the input shape of the image
+         * @param resized_image the pointer of the resized image
+         * @param target_shape the target shape of the resized image
+         */
+        template <typename T>
+        void resize_image_nearest(T *image, std::vector<int> input_shape, T *resized_image, std::vector<int> target_shape);
 
     } // namespace image
 } // namespace dl

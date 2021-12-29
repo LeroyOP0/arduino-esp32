@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <math.h>
 #include <string>
+#include "esp_partition.h"
 
 /**
  * @brief struct of face similarity
@@ -44,6 +45,13 @@ public:
      * @param name      id name
      */
     FaceID(int id, dl::Tensor<feature_t> &id_emb, std::string name = "");
+
+    /**
+     * @brief Construct a new Face ID which is same as input face_id
+     * 
+     * @param face_id input face_id
+     */
+    FaceID(FaceID<feature_t> &face_id);
 
     /**
      * @brief Destroy the Face ID object
@@ -92,7 +100,7 @@ namespace face_recognition_tool
      * @return dl::Tensor<T>* 
      */
     template <typename T>
-    dl::Tensor<T> *transform_mfn_input(dl::Tensor<uint8_t> &image, bool free_input = false, bool do_padding = true);
+    dl::Tensor<T> *transform_mfn_input(dl::Tensor<uint8_t> &image, bool free_input = false);
 
     /**
      * @brief  transform the image to the input of a mfn model 
@@ -106,7 +114,7 @@ namespace face_recognition_tool
      *                             false: do not pad the result
      */
     template <typename T>
-    void transform_mfn_input(dl::Tensor<uint8_t> &image, dl::Tensor<T> &output, bool free_input = false, bool do_padding = true);
+    void transform_mfn_input(dl::Tensor<uint8_t> &image, dl::Tensor<T> &output, bool free_input = false);
 
     /**
      * @brief transform the mfn output embedding to a floating embedding
